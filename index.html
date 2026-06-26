@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Housie 26</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --maroon:#6B1E23;
+    --maroon-deep:#4A1318;
+    --gold:#C9962C;
+    --paper:#F2E8D5;
+    --ink:#2B2420;
+    --stamp:#A6332D;
+    --felt:#2F4C3B;
+    --felt-deep:#203A2C;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.04), transparent 40%),
+      linear-gradient(180deg, var(--felt-deep), var(--felt));
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+    padding:24px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:22px;
+    padding:0 4px;
+  }
+  header h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-optical-sizing:auto;
+    font-size:42px;
+    color:var(--paper);
+    margin:0;
+    letter-spacing:0.5px;
+  }
+  header h1 span{color:var(--gold); font-style:italic; font-weight:400;}
+  header .tag{
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    color:rgba(242,232,213,0.55);
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+  }
+
+  .layout{
+    display:grid;
+    grid-template-columns:300px 1fr;
+    gap:24px;
+  }
+  @media (max-width:880px){ .layout{grid-template-columns:1fr;} }
+
+  .panel{
+    background:var(--paper);
+    border-radius:6px;
+    padding:20px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+    position:relative;
+  }
+  .panel::before{
+    content:"";
+    position:absolute; inset:0;
+    border-radius:6px;
+    border:1px solid rgba(43,36,32,0.12);
+    pointer-events:none;
+  }
+
+  .caller{
+    text-align:center;
+  }
+  .caller .label{
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--maroon);
+    margin-bottom:10px;
+  }
+  .current-number{
+    width:120px; height:120px;
+    margin:0 auto 16px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff, var(--paper) 60%);
+    border:4px solid var(--stamp);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Mono', monospace;
+    font-weight:700;
+    font-size:46px;
+    color:var(--stamp);
+    box-shadow:0 4px 10px rgba(0,0,0,0.18) inset, 0 6px 14px rgba(0,0,0,0.2);
+    transform:rotate(-3deg);
+    transition:transform 0.15s;
+  }
+  .current-number.pop{ animation:stampPop 0.35s ease; }
+  @keyframes stampPop{
+    0%{ transform:rotate(-3deg) scale(1.4); opacity:0.4; }
+    60%{ transform:rotate(-3deg) scale(0.95); }
+    100%{ transform:rotate(-3deg) scale(1); opacity:1; }
+  }
+
+  .timer{
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    color:var(--ink);
+    opacity:0.7;
+    margin-bottom:14px;
+  }
+
+  .controls{ display:flex; flex-direction:column; gap:10px; margin-top:6px;}
+  button{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    border:none;
+    border-radius:4px;
+    padding:11px 16px;
+    cursor:pointer;
+    transition:transform 0.1s, filter 0.1s;
+  }
+  button:active{ transform:translateY(1px); }
+  button:focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+  .btn-primary{ background:var(--maroon); color:var(--paper); }
+  .btn-primary:hover{ filter:brightness(1.1); }
+  .btn-primary:disabled{ background:#9c9088; cursor:not-allowed; }
+  .btn-secondary{ background:transparent; color:var(--maroon); border:1.5px solid var(--maroon); }
+  .btn-secondary:hover{ background:rgba(107,30,35,0.06); }
+
+  .history-title{
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--maroon);
+    margin:22px 0 8px;
+  }
+  .history{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    max-height:160px;
+    overflow-y:auto;
+  }
+  .history .chip{
+    width:30px; height:30px;
+    border-radius:50%;
+    background:var(--maroon);
+    color:var(--paper);
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .winners-title{
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--maroon);
+    margin:22px 0 8px;
+  }
+  .winner-row{
+    font-size:13px;
+    padding:6px 0;
+    border-bottom:1px solid rgba(43,36,32,0.1);
+    display:flex; justify-content:space-between;
+  }
+  .winner-row .prize{ font-weight:600; }
+  .winner-row .who{ color:var(--maroon); font-family:'Space Mono', monospace; font-size:12px;}
+
+  /* tickets area */
+  .tickets-toolbar{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:14px; flex-wrap:wrap; gap:10px;
+  }
+  .tickets-toolbar h2{
+    font-family:'Fraunces', serif;
+    font-size:22px; color:var(--paper);
+    margin:0;
+    font-weight:500;
+  }
+  .ticket-count{
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    color:rgba(242,232,213,0.6);
+  }
+
+  .tickets-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(330px,1fr));
+    gap:18px;
+  }
+
+  .ticket{
+    background:var(--paper);
+    border-radius:4px;
+    padding:14px 14px 10px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.3);
+    position:relative;
+    transform:rotate(var(--rot,0deg));
+  }
+  .ticket::after{
+    content:"";
+    position:absolute; inset:6px;
+    border:1px dashed rgba(43,36,32,0.25);
+    pointer-events:none;
+  }
+  .ticket-head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:8px;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    color:var(--maroon);
+    letter-spacing:1px;
+  }
+  .ticket-grid{
+    display:grid;
+    grid-template-columns:repeat(9, 1fr);
+    gap:3px;
+  }
+  .cell{
+    aspect-ratio:1/1;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Mono', monospace;
+    font-size:15px;
+    font-weight:700;
+    border-radius:3px;
+    background:rgba(43,36,32,0.04);
+    color:var(--ink);
+    position:relative;
+  }
+  .cell.empty{ background:transparent; }
+  .cell.marked{
+    color:var(--paper);
+  }
+  .cell.marked::before{
+    content:"";
+    position:absolute; inset:0;
+    border-radius:50%;
+    background:var(--stamp);
+    transform:scale(0.92) rotate(-8deg);
+    opacity:0.92;
+    z-index:0;
+  }
+  .cell.marked span{ position:relative; z-index:1; }
+
+  .ticket-status{
+    margin-top:8px;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    color:var(--gold);
+    min-height:14px;
+    font-weight:700;
+  }
+
+  footer{
+    text-align:center;
+    margin-top:32px;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    color:rgba(242,232,213,0.4);
+  }
+
+  .empty-state{
+    color:rgba(242,232,213,0.6);
+    font-size:14px;
+    padding:30px 0;
+    text-align:center;
+  }
+
+  /* booking */
+  .booking-panel{
+    background:var(--paper);
+    border-radius:6px;
+    padding:24px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+    margin-bottom:24px;
+  }
+  .booking-panel h2{
+    font-family:'Fraunces', serif;
+    font-size:24px;
+    font-weight:500;
+    margin:0 0 4px;
+    color:var(--maroon-deep);
+  }
+  .booking-panel .sub{
+    font-size:13px;
+    color:rgba(43,36,32,0.6);
+    margin-bottom:18px;
+  }
+  .booking-form{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    margin-bottom:18px;
+  }
+  .booking-form .field{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+  .booking-form label{
+    font-family:'Space Mono', monospace;
+    font-size:10px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--maroon);
+  }
+  .booking-form input{
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    padding:9px 11px;
+    border:1.5px solid rgba(43,36,32,0.2);
+    border-radius:4px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .booking-form input:focus-visible{ outline:3px solid var(--gold); outline-offset:1px; border-color:var(--maroon); }
+  .booking-form input#playerName{ width:220px; }
+  .booking-form input#ticketQty{ width:90px; }
+  .booking-error{
+    font-size:12px;
+    color:var(--stamp);
+    font-weight:600;
+    margin:-8px 0 14px;
+    min-height:14px;
+  }
+
+  .booking-list{
+    border-top:1px solid rgba(43,36,32,0.12);
+  }
+  .booking-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid rgba(43,36,32,0.1);
+  }
+  .booking-row .who{
+    font-weight:600;
+    font-size:14px;
+  }
+  .booking-row .qty{
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    color:var(--maroon);
+    margin-left:10px;
+  }
+  .booking-row .remove{
+    background:transparent;
+    border:none;
+    color:var(--stamp);
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    cursor:pointer;
+    padding:4px 8px;
+  }
+  .booking-row .remove:hover{ text-decoration:underline; }
+
+  .booking-summary{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:16px;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  .booking-summary .totals{
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    color:var(--ink);
+  }
+  .booking-summary .totals b{ color:var(--maroon); }
+
+  .hidden{ display:none !important; }
+
+  .display-toggle{
+    position:absolute;
+    top:14px; right:14px;
+    background:transparent;
+    border:1.5px solid var(--maroon);
+    color:var(--maroon);
+    font-family:'Space Mono', monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    padding:6px 10px;
+    border-radius:4px;
+    cursor:pointer;
+  }
+  .display-toggle:hover{ background:rgba(107,30,35,0.06); }
+
+  body.display-mode #operatorControls,
+  body.display-mode #resetBtnRow{ display:none !important; }
+  body.display-mode .display-toggle{
+    border-color:var(--gold);
+    color:var(--maroon-deep);
+    background:var(--gold);
+  }
+  body.display-mode #shareBox{ display:none !important; }
+
+  .share-box{
+    margin-top:38px;
+    margin-bottom:18px;
+    text-align:left;
+    background:rgba(43,36,32,0.04);
+    border:1px dashed rgba(43,36,32,0.2);
+    border-radius:5px;
+    padding:10px 12px;
+  }
+  .share-label{
+    display:block;
+    font-family:'Space Mono', monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--maroon);
+    margin-bottom:6px;
+  }
+  .share-row{ display:flex; gap:6px; }
+  .share-row input{
+    flex:1;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    padding:7px 9px;
+    border:1px solid rgba(43,36,32,0.2);
+    border-radius:4px;
+    background:#fff;
+    color:var(--ink);
+    min-width:0;
+  }
+  .share-note{
+    font-family:'Space Mono', monospace;
+    font-size:10px;
+    color:rgba(43,36,32,0.55);
+    margin-top:6px;
+    line-height:1.4;
+  }
+
+  .ticket-owner{
+    font-family:'Fraunces', serif;
+    font-size:15px;
+    font-weight:600;
+    color:var(--maroon-deep);
+    margin-bottom:2px;
+  }
+
+  .pool-title{
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--maroon);
+    margin:20px 0 10px;
+    border-top:1px solid rgba(43,36,32,0.12);
+    padding-top:16px;
+  }
+  .ticket-pool{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(190px,1fr));
+    gap:12px;
+    max-height:520px;
+    overflow-y:auto;
+    padding:4px 4px 4px 0;
+  }
+  .mini-ticket{
+    background:#fff;
+    border:2px solid rgba(43,36,32,0.12);
+    border-radius:5px;
+    padding:8px;
+    cursor:pointer;
+    transition:border-color 0.12s, transform 0.12s;
+    position:relative;
+  }
+  .mini-ticket:hover{ border-color:var(--gold); }
+  .mini-ticket:focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+  .mini-ticket.selected{
+    border-color:var(--maroon);
+    background:rgba(107,30,35,0.06);
+    transform:translateY(-2px);
+  }
+  .mini-ticket.taken{
+    cursor:not-allowed;
+    opacity:0.45;
+    background:rgba(43,36,32,0.04);
+  }
+  .mini-head{
+    display:flex; justify-content:space-between;
+    font-family:'Space Mono', monospace;
+    font-size:9px;
+    color:var(--maroon);
+    margin-bottom:5px;
+    letter-spacing:0.5px;
+  }
+  .mini-head span:last-child{ font-weight:700; }
+  .mini-ticket:not(.taken):not(.selected) .mini-head span:last-child{ color:#2F6B45; }
+  .mini-ticket.selected .mini-head span:last-child{ color:var(--maroon); }
+  .mini-ticket.taken .mini-head span:last-child{ color:var(--stamp); }
+  .mini-grid{
+    display:grid;
+    grid-template-columns:repeat(9,1fr);
+    gap:1.5px;
+  }
+  .mini-cell{
+    aspect-ratio:1/1;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Mono', monospace;
+    font-size:8.5px;
+    font-weight:700;
+    color:var(--ink);
+    background:rgba(43,36,32,0.04);
+    border-radius:1.5px;
+  }
+  .mini-cell.empty{ background:transparent; }
+  .taken-by{
+    font-family:'Space Mono', monospace;
+    font-size:9px;
+    color:var(--stamp);
+    margin-top:5px;
+    font-weight:700;
+  }
+  .pool-title-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:20px 0 10px;
+    border-top:1px solid rgba(43,36,32,0.12);
+    padding-top:16px;
+  }
+  .filter-toggle{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    color:var(--maroon);
+    cursor:pointer;
+    text-transform:uppercase;
+    letter-spacing:1px;
+  }
+  .filter-toggle input{ accent-color:var(--maroon); width:14px; height:14px; cursor:pointer; }
+
+  .legend{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .legend-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    color:var(--ink);
+  }
+  .dot{
+    width:11px; height:11px;
+    border-radius:50%;
+    display:inline-block;
+  }
+  .dot.available{ background:#2F6B45; }
+  .dot.selected{ background:var(--maroon); }
+  .dot.taken{ background:var(--stamp); opacity:0.55; }
+
+  .ticket-map{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(40px,1fr));
+    gap:6px;
+    margin-bottom:6px;
+  }
+  .map-cell{
+    aspect-ratio:1/1;
+    border-radius:5px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    border:none;
+    transition:transform 0.1s, filter 0.1s;
+  }
+  .map-cell:hover{ filter:brightness(1.1); }
+  .map-cell:focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+  .map-cell.available{ background:#2F6B45; color:#EFF6F1; }
+  .map-cell.selected{ background:var(--maroon); color:var(--paper); transform:scale(1.08); }
+  .map-cell.taken{ background:rgba(166,51,45,0.35); color:rgba(43,36,32,0.5); cursor:not-allowed; }
+
+  .pool-size-row{
+    display:flex;
+    align-items:flex-end;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:16px;
+    padding-bottom:16px;
+    border-bottom:1px solid rgba(43,36,32,0.12);
+  }
+  .pool-size-row .field input{ width:140px; }
+  .pool-size-note{
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    color:var(--stamp);
+    font-weight:600;
+    align-self:center;
+  }
+
+  .prize-picker{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
+    gap:8px;
+    margin-bottom:18px;
+  }
+  .prize-option{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:9px 12px;
+    border:1.5px solid rgba(43,36,32,0.18);
+    border-radius:5px;
+    cursor:pointer;
+    background:#fff;
+    transition:border-color 0.12s, background 0.12s;
+  }
+  .prize-option:hover{ border-color:var(--gold); }
+  .prize-option.checked{
+    border-color:var(--maroon);
+    background:rgba(107,30,35,0.06);
+  }
+  .prize-option input{ accent-color:var(--maroon); width:16px; height:16px; cursor:pointer; }
+  .prize-option .ptext{ display:flex; flex-direction:column; }
+  .prize-option .pname{ font-weight:600; font-size:13px; color:var(--ink); }
+  .prize-option .pdesc{ font-family:'Space Mono', monospace; font-size:10px; color:rgba(43,36,32,0.55); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Lucky Housie <span>26</span></h1>
+    <div class="tag">Housie · Tambola · 90 ball</div>
+  </header>
+
+  <div class="booking-panel" id="bookingPanel">
+    <h2>Book your tickets</h2>
+    <div class="sub">Enter a player name, then click on tickets below to claim them. Book when you've picked the ones you want.</div>
+    <div class="pool-size-row">
+      <div class="field">
+        <label for="poolSizeInput">Total tickets in this game</label>
+        <input type="number" id="poolSizeInput" min="1" max="200" value="24">
+      </div>
+      <button class="btn-secondary" id="setPoolSizeBtn" style="padding:9px 16px;">Generate this many tickets</button>
+      <span class="pool-size-note" id="poolSizeNote"></span>
+    </div>
+    <div class="booking-form">
+      <div class="field">
+        <label for="playerName">Player name</label>
+        <input type="text" id="playerName" placeholder="e.g. Priya" maxlength="24">
+      </div>
+      <button class="btn-primary" id="addBookingBtn" style="padding:10px 18px;" disabled>Book selected tickets (<span id="selectedCount">0</span>)</button>
+      <button class="btn-secondary" id="clearSelectionBtn" style="padding:10px 16px;">Clear selection</button>
+    </div>
+    <div class="booking-error" id="bookingError"></div>
+    <div class="booking-list" id="bookingList"></div>
+    <div class="booking-summary">
+      <div class="totals"><b id="bookedPlayers">0</b> players · <b id="bookedTickets">0</b> tickets booked · <b id="availableCount">0</b> still available</div>
+      <button class="btn-primary" id="startGameBtn" disabled style="padding:11px 22px;">Start game with these bookings</button>
+    </div>
+
+    <div class="pool-title">Customer self-booking link</div>
+    <div class="sub" style="margin-bottom:12px;">Generate a link customers can open themselves to pick tickets. They won't be booked automatically — picking tickets opens WhatsApp with a pre-filled message to you, so you can confirm and book it for them here.</div>
+    <div class="booking-form">
+      <div class="field">
+        <label for="whatsappNumber">Your WhatsApp number (with country code, digits only)</label>
+        <input type="text" id="whatsappNumber" placeholder="e.g. 919876543210" maxlength="18" style="width:240px;">
+      </div>
+      <button class="btn-secondary" id="generateCustomerLinkBtn" style="padding:10px 16px;">Generate customer link</button>
+    </div>
+    <div class="booking-error" id="customerLinkError"></div>
+    <div class="share-box hidden" id="customerLinkBox" style="margin-bottom:18px;">
+      <label class="share-label">Send this to customers</label>
+      <div class="share-row">
+        <input type="text" id="customerLinkInput" readonly>
+        <button class="btn-secondary" id="copyCustomerLinkBtn" style="padding:8px 12px;font-size:12px;">Copy link</button>
+      </div>
+      <div class="share-note" id="customerLinkNote"></div>
+    </div>
+
+    <div class="pool-title" style="margin-top:0;border-top:none;padding-top:0;">Choose rewards for this game</div>
+    <div class="prize-picker" id="prizePicker"></div>
+
+    <div class="pool-title-row">
+      <div class="pool-title" style="margin:0;border-top:none;padding-top:0;">Ticket map</div>
+      <div class="legend">
+        <span class="legend-item"><span class="dot available"></span>Available</span>
+        <span class="legend-item"><span class="dot selected"></span>Selected</span>
+        <span class="legend-item"><span class="dot taken"></span>Taken</span>
+      </div>
+    </div>
+    <div class="ticket-map" id="ticketMap"></div>
+
+    <div class="pool-title-row">
+      <div class="pool-title" style="margin:0;border-top:none;padding-top:0;">Available tickets — click to select</div>
+      <label class="filter-toggle">
+        <input type="checkbox" id="showAvailableOnly">
+        Show available only
+      </label>
+    </div>
+    <div class="ticket-pool" id="ticketPoolGrid"></div>
+  </div>
+
+  <div class="layout hidden" id="gameLayout">
+    <div class="panel caller">
+      <button class="display-toggle" id="displayToggleBtn" title="Switch view">Customer display mode</button>
+      <div class="share-box" id="shareBox">
+        <label class="share-label">Share with customers</label>
+        <div class="share-row">
+          <input type="text" id="shareLinkInput" readonly>
+          <button class="btn-secondary" id="copyShareBtn" style="padding:8px 12px;font-size:12px;">Copy link</button>
+        </div>
+        <div class="share-note" id="shareNote"></div>
+      </div>
+      <div class="label">Now Calling</div>
+      <div class="current-number" id="currentNumber">—</div>
+      <div class="timer" id="timerText">Press start to begin the draw</div>
+      <div class="controls" id="operatorControls">
+        <button class="btn-primary" id="startBtn">Start auto-draw</button>
+        <button class="btn-secondary" id="drawOneBtn">Call next number</button>
+        <button class="btn-secondary" id="resetBtn">New game (re-book)</button>
+      </div>
+      <div class="controls" style="margin-top:8px;">
+        <button class="btn-secondary" id="soundToggleBtn">🔊 Sound on</button>
+      </div>
+
+      <div class="history-title">Called numbers (<span id="calledCount">0</span>/90)</div>
+      <div class="history" id="history"></div>
+
+      <div class="winners-title">Winners</div>
+      <div id="winners"><div class="empty-state" style="padding:10px 0;">No claims yet</div></div>
+    </div>
+
+    <div>
+      <div class="tickets-toolbar">
+        <h2>Booked tickets</h2>
+        <div class="ticket-count"><span id="ticketCount">0</span> tickets across <span id="playerCount">0</span> players</div>
+      </div>
+      <div class="tickets-grid" id="ticketsGrid"></div>
+    </div>
+  </div>
+
+  <footer>An original housie game · numbers are drawn fairly with no repeats · not affiliated with any third-party platform</footer>
+</div>
+
+<script>
+(function(){
+  const ALL_PRIZES = [
+    {key:'early5', label:'Early Five', desc:'first 5 numbers marked'},
+    {key:'top', label:'Top Line', desc:'all numbers in top row'},
+    {key:'middle', label:'Middle Line', desc:'all numbers in middle row'},
+    {key:'bottom', label:'Bottom Line', desc:'all numbers in bottom row'},
+    {key:'corner', label:'Corners', desc:'4 corner numbers marked'},
+    {key:'house1', label:'First Housefull', desc:'first ticket fully marked'},
+    {key:'house2', label:'Second Housefull', desc:'next ticket fully marked'}
+  ];
+  let selectedPrizeKeys = ALL_PRIZES.map(p=>p.key);
+  let PRIZES = ALL_PRIZES.slice();
+
+  let pool = [];
+  let called = [];
+  let tickets = [];
+  let bookings = []; // {name, ticketIds:[...]}
+  let ticketPool = []; // {id, grid, takenBy:null|name}
+  let selectedIds = [];
+  let claimed = {};
+  let timer = null;
+  let drawing = false;
+  const DRAW_INTERVAL = 3500;
+  let poolSize = 24;
+  let isCustomerView = false;
+  const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('lucky-housie-26') : null;
+
+  function applyRemoteState(newCalled){
+    const prevLen = called.length;
+    called = newCalled.slice();
+    checkWins();
+    renderHistory();
+    renderTickets();
+    renderWinners();
+    if(called.length > prevLen){
+      const last = called[called.length-1];
+      const cur = document.getElementById('currentNumber');
+      cur.textContent = last;
+      cur.classList.remove('pop');
+      void cur.offsetWidth;
+      cur.classList.add('pop');
+      if(called.length - prevLen === 1){
+        speakNumber(last);
+      }
+      document.getElementById('timerText').textContent = 'Live — numbers called by the host';
+    } else if(called.length === 0){
+      document.getElementById('currentNumber').textContent = '—';
+      document.getElementById('timerText').textContent = 'Waiting for the host to start the draw…';
+    }
+  }
+
+  if(syncChannel){
+    syncChannel.onmessage = (e)=>{
+      const msg = e.data;
+      if(!msg) return;
+      if(isCustomerView){
+        if(msg.type === 'state'){ applyRemoteState(msg.called); }
+      } else {
+        if(msg.type === 'request-state'){ syncChannel.postMessage({type:'state', called: called.slice()}); }
+      }
+    };
+  }
+
+  function buildTicketPool(){
+    ticketPool = [];
+    for(let i=0;i<poolSize;i++){
+      ticketPool.push({id:i, grid: generateTicket(), takenBy:null});
+    }
+    selectedIds = [];
+  }
+
+  function renderTicketMap(){
+    const map = document.getElementById('ticketMap');
+    map.innerHTML = '';
+    ticketPool.forEach(t=>{
+      const isTaken = !!t.takenBy;
+      const isSelected = selectedIds.includes(t.id);
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = 'map-cell ' + (isSelected ? 'selected' : (isTaken ? 'taken' : 'available'));
+      cell.textContent = t.id + 1;
+      cell.disabled = isTaken;
+      cell.title = isTaken ? `Booked · ${t.takenBy}` : (isSelected ? 'Selected' : 'Available — click to select');
+      if(!isTaken){
+        cell.addEventListener('click', ()=>{
+          const idx = selectedIds.indexOf(t.id);
+          if(idx>=0){ selectedIds.splice(idx,1); } else { selectedIds.push(t.id); }
+          renderTicketPool();
+          updateBookButton();
+        });
+      }
+      map.appendChild(cell);
+    });
+  }
+
+  function renderTicketPool(){
+    const grid = document.getElementById('ticketPoolGrid');
+    grid.innerHTML = '';
+    renderTicketMap();
+    const onlyAvailable = document.getElementById('showAvailableOnly').checked;
+    const visibleTickets = onlyAvailable ? ticketPool.filter(t=>!t.takenBy) : ticketPool;
+    if(visibleTickets.length===0){
+      grid.innerHTML = '<div class="empty-state" style="padding:20px 0;">No tickets available — all booked, or try unchecking the filter</div>';
+    }
+    visibleTickets.forEach(t=>{
+      const card = document.createElement('div');
+      const isTaken = !!t.takenBy;
+      const isSelected = selectedIds.includes(t.id);
+      card.className = 'mini-ticket' + (isTaken ? ' taken' : '') + (isSelected ? ' selected' : '');
+      card.tabIndex = isTaken ? -1 : 0;
+      card.setAttribute('role','button');
+      card.setAttribute('aria-pressed', isSelected ? 'true':'false');
+
+      const head = document.createElement('div');
+      head.className = 'mini-head';
+      head.innerHTML = `<span>#${t.id+1}</span><span>${isSelected ? 'SELECTED' : (isTaken ? 'TAKEN' : 'AVAILABLE')}</span>`;
+      card.appendChild(head);
+
+      const mg = document.createElement('div');
+      mg.className = 'mini-grid';
+      t.grid.forEach(row=>{
+        row.forEach(n=>{
+          const cell = document.createElement('div');
+          cell.className = 'mini-cell' + (n===null ? ' empty':'');
+          if(n!==null) cell.textContent = n;
+          mg.appendChild(cell);
+        });
+      });
+      card.appendChild(mg);
+
+      if(isTaken){
+        const tb = document.createElement('div');
+        tb.className = 'taken-by';
+        tb.textContent = `Booked · ${t.takenBy}`;
+        card.appendChild(tb);
+      }
+
+      if(!isTaken){
+        const toggle = ()=>{
+          const idx = selectedIds.indexOf(t.id);
+          if(idx>=0){ selectedIds.splice(idx,1); } else { selectedIds.push(t.id); }
+          renderTicketPool();
+          updateBookButton();
+        };
+        card.addEventListener('click', toggle);
+        card.addEventListener('keydown', (e)=>{
+          if(e.key==='Enter' || e.key===' '){ e.preventDefault(); toggle(); }
+        });
+      }
+
+      grid.appendChild(card);
+    });
+
+    const available = ticketPool.filter(t=>!t.takenBy).length;
+    document.getElementById('availableCount').textContent = available;
+  }
+
+  function updateBookButton(){
+    document.getElementById('selectedCount').textContent = selectedIds.length;
+    document.getElementById('addBookingBtn').disabled = selectedIds.length===0;
+  }
+
+  function renderBookings(){
+    const list = document.getElementById('bookingList');
+    list.innerHTML = '';
+    if(bookings.length===0){
+      list.innerHTML = '<div class="empty-state" style="padding:14px 0;">No bookings yet — pick tickets below and add a name</div>';
+    } else {
+      bookings.forEach((b, idx)=>{
+        const row = document.createElement('div');
+        row.className = 'booking-row';
+        row.innerHTML = `<div><span class="who">${escapeHtml(b.name)}</span><span class="qty">${b.ticketIds.length} ticket${b.ticketIds.length>1?'s':''} — #${b.ticketIds.map(id=>id+1).join(', #')}</span></div>`;
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove';
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', ()=>{
+          b.ticketIds.forEach(id=>{
+            const t = ticketPool.find(x=>x.id===id);
+            if(t) t.takenBy = null;
+          });
+          bookings.splice(idx,1);
+          renderBookings();
+          renderTicketPool();
+        });
+        row.appendChild(removeBtn);
+        list.appendChild(row);
+      });
+    }
+    const totalTickets = bookings.reduce((s,b)=>s+b.ticketIds.length,0);
+    document.getElementById('bookedPlayers').textContent = bookings.length;
+    document.getElementById('bookedTickets').textContent = totalTickets;
+    document.getElementById('startGameBtn').disabled = bookings.length===0;
+  }
+
+  function renderPrizePicker(){
+    const wrap = document.getElementById('prizePicker');
+    wrap.innerHTML = '';
+    ALL_PRIZES.forEach(p=>{
+      const checked = selectedPrizeKeys.includes(p.key);
+      const label = document.createElement('label');
+      label.className = 'prize-option' + (checked ? ' checked':'');
+      label.innerHTML = `<input type="checkbox" ${checked?'checked':''}><span class="ptext"><span class="pname">${p.label}</span><span class="pdesc">${p.desc}</span></span>`;
+      const cb = label.querySelector('input');
+      cb.addEventListener('change', ()=>{
+        if(cb.checked){
+          if(!selectedPrizeKeys.includes(p.key)) selectedPrizeKeys.push(p.key);
+        } else {
+          selectedPrizeKeys = selectedPrizeKeys.filter(k=>k!==p.key);
+        }
+        label.classList.toggle('checked', cb.checked);
+      });
+      wrap.appendChild(label);
+    });
+  }
+
+  function getCorners(grid){
+    const topFilled = grid[0].filter(n=>n!==null);
+    const bottomFilled = grid[2].filter(n=>n!==null);
+    if(topFilled.length===0 || bottomFilled.length===0) return [];
+    return [topFilled[0], topFilled[topFilled.length-1], bottomFilled[0], bottomFilled[bottomFilled.length-1]];
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function addBooking(){
+    const nameInput = document.getElementById('playerName');
+    const errorEl = document.getElementById('bookingError');
+    const name = nameInput.value.trim();
+    errorEl.textContent = '';
+
+    if(!name){
+      errorEl.textContent = 'Enter a player name.';
+      return;
+    }
+    if(bookings.some(b=>b.name.toLowerCase()===name.toLowerCase())){
+      errorEl.textContent = 'That name has already booked — remove it first to add more tickets.';
+      return;
+    }
+    if(selectedIds.length===0){
+      errorEl.textContent = 'Select at least one ticket below.';
+      return;
+    }
+    selectedIds.forEach(id=>{
+      const t = ticketPool.find(x=>x.id===id);
+      if(t) t.takenBy = name;
+    });
+    bookings.push({name, ticketIds:[...selectedIds]});
+    selectedIds = [];
+    nameInput.value = '';
+    nameInput.focus();
+    renderBookings();
+    renderTicketPool();
+    updateBookButton();
+  }
+
+  function buildTicketsFromBookings(){
+    tickets = [];
+    bookings.forEach(b=>{
+      b.ticketIds.forEach(id=>{
+        const t = ticketPool.find(x=>x.id===id);
+        tickets.push({grid: t.grid, owner: b.name});
+      });
+    });
+  }
+
+  function encodePayload(obj){
+    return btoa(encodeURIComponent(JSON.stringify(obj)));
+  }
+  function decodePayload(str){
+    return JSON.parse(decodeURIComponent(atob(str)));
+  }
+
+  function baseUrlNoQuery(){
+    let href = window.location.href;
+    href = href.split('#')[0];
+    href = href.split('?')[0];
+    return href;
+  }
+
+  function safePushState(url){
+    try{ history.pushState(null, '', url); } catch(e){ /* ignore — some viewers restrict this */ }
+  }
+
+  function updateShareLink(){
+    const payload = { tickets, prizes: PRIZES.map(p=>p.key) };
+    const encoded = encodePayload(payload);
+    const link = baseUrlNoQuery() + '?g=' + encoded;
+    safePushState(link);
+    document.getElementById('shareLinkInput').value = link;
+  }
+
+  function generateCustomerLink(){
+    const input = document.getElementById('whatsappNumber');
+    const errorEl = document.getElementById('customerLinkError');
+    const num = input.value.trim().replace(/[^0-9]/g,'');
+    errorEl.textContent = '';
+    if(!num || num.length<8){
+      errorEl.textContent = 'Enter a valid WhatsApp number with country code (digits only, e.g. 919876543210).';
+      return;
+    }
+    const payload = {
+      pool: ticketPool.map(t=>({id:t.id, grid:t.grid, takenBy:t.takenBy})),
+      whatsapp: num
+    };
+    const encoded = encodePayload(payload);
+    const base = baseUrlNoQuery().replace(/[^/]*$/, 'customer-booking.html');
+    const link = base + '?c=' + encoded;
+    const box = document.getElementById('customerLinkBox');
+    box.classList.remove('hidden');
+    document.getElementById('customerLinkInput').value = link;
+    document.getElementById('customerLinkNote').textContent = 'This link is a snapshot of current availability — regenerate it whenever bookings change so customers see an up-to-date map.';
+  }
+
+  function startGameFromBookings(){
+    if(bookings.length===0) return;
+    if(selectedPrizeKeys.length===0){
+      document.getElementById('bookingError').textContent = 'Select at least one reward before starting.';
+      return;
+    }
+    PRIZES = ALL_PRIZES.filter(p=>selectedPrizeKeys.includes(p.key));
+    buildTicketsFromBookings();
+    document.getElementById('bookingPanel').classList.add('hidden');
+    document.getElementById('gameLayout').classList.remove('hidden');
+    beginRound();
+    updateShareLink();
+  }
+
+  function freshPool(){
+    const arr = [];
+    for(let i=1;i<=90;i++) arr.push(i);
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr;
+  }
+
+  // Generate a standard 3x9 housie ticket: each row has 5 numbers + 4 blanks,
+  // each column draws from its number range, columns sorted ascending top-to-bottom.
+  function generateTicket(){
+    const colRanges = [
+      [1,9],[10,19],[20,29],[30,39],[40,49],[50,59],[60,69],[70,79],[80,90]
+    ];
+    // decide how many numbers per column (1-3), total 15, each row exactly 5
+    let attempt = 0;
+    while(true){
+      attempt++;
+      const colCounts = new Array(9).fill(0);
+      let remaining = 15;
+      // ensure each column gets at least... not required, but max 3
+      const order = [...Array(9).keys()];
+      for(let i=order.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [order[i],order[j]]=[order[j],order[i]];
+      }
+      for(const c of order){
+        const maxAllowed = Math.min(3, remaining);
+        if(maxAllowed<=0){ colCounts[c]=0; continue; }
+        const count = 1 + Math.floor(Math.random()*maxAllowed);
+        colCounts[c] = count;
+        remaining -= count;
+      }
+      if(remaining !== 0) continue;
+      if(colCounts.some(c=>c>3)) continue;
+
+      // assign rows per column count, each row must end with exactly 5 filled
+      const rowFill = [0,0,0];
+      const colRowAssignment = colCounts.map(count=>{
+        const rows = [0,1,2];
+        for(let i=rows.length-1;i>0;i--){
+          const j = Math.floor(Math.random()*(i+1));
+          [rows[i],rows[j]]=[rows[j],rows[i]];
+        }
+        return rows.slice(0,count);
+      });
+      colRowAssignment.forEach(rows=>rows.forEach(r=>rowFill[r]++));
+      if(rowFill.some(r=>r!==5)) continue;
+
+      // build grid
+      const grid = [[null,null,null,null,null,null,null,null,null],
+                     [null,null,null,null,null,null,null,null,null],
+                     [null,null,null,null,null,null,null,null,null]];
+      let ok = true;
+      for(let c=0;c<9;c++){
+        const [lo,hi] = colRanges[c];
+        const count = colCounts[c];
+        if(count===0) continue;
+        const span = hi-lo+1;
+        if(count>span){ ok=false; break; }
+        const nums = [];
+        const used = new Set();
+        while(nums.length<count){
+          const n = lo + Math.floor(Math.random()*span);
+          if(!used.has(n)){ used.add(n); nums.push(n); }
+        }
+        nums.sort((a,b)=>a-b);
+        const rows = colRowAssignment[c].slice().sort((a,b)=>a-b);
+        rows.forEach((r,idx)=>{ grid[r][c]=nums[idx]; });
+      }
+      if(!ok) continue;
+      return grid;
+    }
+  }
+
+  function flatNumbers(grid){
+    return grid.flat().filter(n=>n!==null);
+  }
+
+  function renderTickets(){
+    const gridEl = document.getElementById('ticketsGrid');
+    gridEl.innerHTML = '';
+    tickets.forEach((t, idx)=>{
+      const card = document.createElement('div');
+      card.className = 'ticket';
+      card.style.setProperty('--rot', (idx%2===0? '-0.4deg':'0.4deg'));
+      const head = document.createElement('div');
+      head.className = 'ticket-head';
+      head.innerHTML = `<span>TICKET #${idx+1}</span><span>${flatNumbers(t.grid).length} nums</span>`;
+      card.appendChild(head);
+
+      const ownerEl = document.createElement('div');
+      ownerEl.className = 'ticket-owner';
+      ownerEl.textContent = t.owner || '';
+      card.appendChild(ownerEl);
+
+      const tg = document.createElement('div');
+      tg.className = 'ticket-grid';
+      t.grid.forEach(row=>{
+        row.forEach(n=>{
+          const cell = document.createElement('div');
+          if(n===null){
+            cell.className = 'cell empty';
+          } else {
+            cell.className = 'cell' + (called.includes(n) ? ' marked' : '');
+            cell.innerHTML = `<span>${n}</span>`;
+          }
+          tg.appendChild(cell);
+        });
+      });
+      card.appendChild(tg);
+
+      const status = document.createElement('div');
+      status.className = 'ticket-status';
+      const wins = Object.keys(claimed).filter(k=>claimed[k].ticketIdx===idx);
+      if(wins.length){
+        status.textContent = wins.map(k=>PRIZES.find(p=>p.key===k).label).join(' · ');
+      }
+      card.appendChild(status);
+
+      gridEl.appendChild(card);
+    });
+    document.getElementById('ticketCount').textContent = tickets.length;
+    document.getElementById('playerCount').textContent = bookings.length;
+  }
+
+  function renderHistory(){
+    const h = document.getElementById('history');
+    h.innerHTML = '';
+    called.forEach(n=>{
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.textContent = n;
+      h.appendChild(chip);
+    });
+    document.getElementById('calledCount').textContent = called.length;
+  }
+
+  function renderWinners(){
+    const w = document.getElementById('winners');
+    const keys = Object.keys(claimed);
+    if(keys.length===0){
+      w.innerHTML = '<div class="empty-state" style="padding:10px 0;">No claims yet</div>';
+      return;
+    }
+    w.innerHTML = '';
+    keys.forEach(k=>{
+      const c = claimed[k];
+      const row = document.createElement('div');
+      row.className = 'winner-row';
+      row.innerHTML = `<span class="prize">${PRIZES.find(p=>p.key===k).label}</span><span class="who">${escapeHtml(tickets[c.ticketIdx].owner)} · #${c.ticketIdx+1}</span>`;
+      w.appendChild(row);
+    });
+  }
+
+  function checkWins(){
+    tickets.forEach((t, idx)=>{
+      const lines = {
+        top: t.grid[0].filter(n=>n!==null),
+        middle: t.grid[1].filter(n=>n!==null),
+        bottom: t.grid[2].filter(n=>n!==null),
+      };
+      const all = flatNumbers(t.grid);
+      const corners = getCorners(t.grid);
+
+      if(selectedPrizeKeys.includes('early5') && !claimed.early5){
+        const markedCount = all.filter(n=>called.includes(n)).length;
+        if(markedCount>=5){ claimed.early5 = {ticketIdx:idx}; }
+      }
+      ['top','middle','bottom'].forEach(key=>{
+        if(selectedPrizeKeys.includes(key) && !claimed[key] && lines[key].every(n=>called.includes(n))){
+          claimed[key] = {ticketIdx:idx};
+        }
+      });
+      if(selectedPrizeKeys.includes('corner') && !claimed.corner && corners.length===4 && corners.every(n=>called.includes(n))){
+        claimed.corner = {ticketIdx:idx};
+      }
+      const isFullHouse = all.every(n=>called.includes(n));
+      if(isFullHouse){
+        if(selectedPrizeKeys.includes('house1') && !claimed.house1){
+          claimed.house1 = {ticketIdx:idx};
+        } else if(selectedPrizeKeys.includes('house2') && !claimed.house2 && claimed.house1 && claimed.house1.ticketIdx!==idx){
+          claimed.house2 = {ticketIdx:idx};
+        }
+      }
+    });
+  }
+
+  function allClaimed(){
+    return PRIZES.every(p=>claimed[p.key]);
+  }
+
+  function stopDrawing(){
+    drawing = false;
+    clearInterval(timer);
+    timer = null;
+    document.getElementById('startBtn').textContent = 'Start auto-draw';
+    document.getElementById('timerText').textContent = pool.length===0 ? 'All 90 numbers called — game over' : 'Paused';
+  }
+
+  let soundOn = true;
+  const CALL_NICKNAMES = {
+    1:'Kelly\'s eye', 7:'Lucky seven', 8:'Garden gate', 9:'Doctor\'s orders',
+    10:'Boris\'s den', 11:'Legs eleven', 13:'Unlucky for some', 16:'Sweet sixteen',
+    18:'Coming of age', 21:'Key of the door', 22:'Two little ducks', 24:'Two dozen',
+    33:'All the threes', 44:'Droopy drawers', 50:'Half a century', 66:'Clickety click',
+    77:'Sunset strip', 88:'Two fat ladies', 90:'Top of the shop'
+  };
+
+  function speakNumber(n){
+    if(!soundOn || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const nickname = CALL_NICKNAMES[n];
+    const text = nickname ? `${nickname}. Number ${n}` : `Number ${n}`;
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 0.95;
+    utter.pitch = 1;
+    window.speechSynthesis.speak(utter);
+  }
+
+  function drawNumber(){
+    if(pool.length===0){
+      stopDrawing();
+      document.getElementById('drawOneBtn').disabled = true;
+      document.getElementById('startBtn').disabled = true;
+      return;
+    }
+    const n = pool.pop();
+    called.push(n);
+    const cur = document.getElementById('currentNumber');
+    cur.textContent = n;
+    cur.classList.remove('pop');
+    void cur.offsetWidth;
+    cur.classList.add('pop');
+    speakNumber(n);
+    if(syncChannel) syncChannel.postMessage({type:'state', called: called.slice()});
+
+    renderHistory();
+    checkWins();
+    renderTickets();
+    renderWinners();
+
+    if(pool.length===0){
+      stopDrawing();
+      document.getElementById('drawOneBtn').disabled = true;
+      document.getElementById('startBtn').disabled = true;
+    } else if(allClaimed()){
+      stopDrawing();
+      document.getElementById('timerText').textContent = 'Full house claimed — game complete';
+    }
+  }
+
+  function startDrawing(){
+    if(pool.length===0) return;
+    drawing = true;
+    document.getElementById('startBtn').textContent = 'Pause auto-draw';
+    document.getElementById('timerText').textContent = 'Calling a new number every few seconds…';
+    drawNumber();
+    timer = setInterval(drawNumber, DRAW_INTERVAL);
+  }
+
+  function beginRound(){
+    pool = freshPool();
+    called = [];
+    claimed = {};
+    drawing = false;
+    clearInterval(timer);
+    timer = null;
+    document.getElementById('currentNumber').textContent = '—';
+    document.getElementById('timerText').textContent = 'Press start to begin the draw';
+    document.getElementById('startBtn').textContent = 'Start auto-draw';
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('drawOneBtn').disabled = false;
+    renderHistory();
+    renderTickets();
+    renderWinners();
+    if(syncChannel && !isCustomerView) syncChannel.postMessage({type:'state', called: []});
+  }
+
+  function backToBooking(){
+    clearInterval(timer);
+    timer = null;
+    drawing = false;
+    document.body.classList.remove('display-mode');
+    document.getElementById('displayToggleBtn').textContent = 'Customer display mode';
+    document.getElementById('displayToggleBtn').classList.remove('hidden');
+    document.getElementById('shareBox').classList.remove('hidden');
+    safePushState(window.location.pathname);
+    document.getElementById('gameLayout').classList.add('hidden');
+    document.getElementById('bookingPanel').classList.remove('hidden');
+    document.getElementById('bookingError').textContent = '';
+    bookings = [];
+    buildTicketPool();
+    document.getElementById('poolSizeInput').value = poolSize;
+    renderBookings();
+    renderTicketPool();
+    updateBookButton();
+  }
+
+  document.getElementById('startBtn').addEventListener('click', ()=>{
+    if(drawing){ stopDrawing(); } else { startDrawing(); }
+  });
+  document.getElementById('drawOneBtn').addEventListener('click', ()=>{
+    if(drawing){ stopDrawing(); }
+    drawNumber();
+  });
+  document.getElementById('resetBtn').addEventListener('click', backToBooking);
+  document.getElementById('addBookingBtn').addEventListener('click', addBooking);
+  document.getElementById('startGameBtn').addEventListener('click', startGameFromBookings);
+  document.getElementById('clearSelectionBtn').addEventListener('click', ()=>{
+    selectedIds = [];
+    renderTicketPool();
+    updateBookButton();
+  });
+  document.getElementById('setPoolSizeBtn').addEventListener('click', ()=>{
+    const input = document.getElementById('poolSizeInput');
+    const note = document.getElementById('poolSizeNote');
+    const n = parseInt(input.value, 10);
+    note.textContent = '';
+    if(!n || n<1 || n>200){
+      note.textContent = 'Enter a number between 1 and 200.';
+      return;
+    }
+    if(bookings.length>0){
+      note.textContent = 'Remove existing bookings before changing the ticket count.';
+      return;
+    }
+    poolSize = n;
+    buildTicketPool();
+    renderTicketPool();
+    updateBookButton();
+  });
+  document.getElementById('playerName').addEventListener('keydown', (e)=>{
+    if(e.key==='Enter'){ e.preventDefault(); addBooking(); }
+  });
+  document.getElementById('showAvailableOnly').addEventListener('change', renderTicketPool);
+  document.getElementById('generateCustomerLinkBtn').addEventListener('click', generateCustomerLink);
+  document.getElementById('copyCustomerLinkBtn').addEventListener('click', ()=>{
+    const input = document.getElementById('customerLinkInput');
+    const note = document.getElementById('customerLinkNote');
+    input.select();
+    navigator.clipboard && navigator.clipboard.writeText(input.value).then(()=>{
+      note.textContent = 'Copied! Send this to customers.';
+    }).catch(()=>{
+      note.textContent = 'Could not auto-copy — select the text above and copy manually.';
+    });
+  });
+  document.getElementById('soundToggleBtn').addEventListener('click', ()=>{
+    soundOn = !soundOn;
+    document.getElementById('soundToggleBtn').textContent = soundOn ? '🔊 Sound on' : '🔇 Sound off';
+    if(!soundOn && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+  });
+  document.getElementById('displayToggleBtn').addEventListener('click', ()=>{
+    const on = document.body.classList.toggle('display-mode');
+    document.getElementById('displayToggleBtn').textContent = on ? 'Show operator controls' : 'Customer display mode';
+  });
+  document.getElementById('copyShareBtn').addEventListener('click', ()=>{
+    const input = document.getElementById('shareLinkInput');
+    const note = document.getElementById('shareNote');
+    input.select();
+    navigator.clipboard && navigator.clipboard.writeText(input.value).then(()=>{
+      note.textContent = 'Copied! Send this link to your customers.';
+    }).catch(()=>{
+      note.textContent = 'Could not auto-copy — select the text above and copy manually.';
+    });
+  });
+
+  function loadSharedGameFromUrl(){
+    const params = new URLSearchParams(window.location.search);
+    const g = params.get('g');
+    if(!g) return false;
+    try{
+      const payload = decodePayload(g);
+      if(!payload.tickets || payload.tickets.length===0) return false;
+      isCustomerView = true;
+      tickets = payload.tickets.map(t=>({grid:t.grid, owner:t.owner}));
+      PRIZES = ALL_PRIZES.filter(p=>(payload.prizes||[]).includes(p.key));
+      if(PRIZES.length===0) PRIZES = ALL_PRIZES.slice();
+      document.getElementById('bookingPanel').classList.add('hidden');
+      document.getElementById('gameLayout').classList.remove('hidden');
+      document.getElementById('shareBox').classList.add('hidden');
+      document.getElementById('displayToggleBtn').classList.add('hidden');
+      document.body.classList.add('display-mode');
+      beginRound();
+      document.getElementById('timerText').textContent = 'Waiting for the host to start the draw…';
+      if(syncChannel) syncChannel.postMessage({type:'request-state'});
+      return true;
+    } catch(e){
+      return false;
+    }
+  }
+
+  if(!loadSharedGameFromUrl()){
+    document.getElementById('poolSizeInput').value = poolSize;
+    buildTicketPool();
+    renderBookings();
+    renderTicketPool();
+    renderPrizePicker();
+    updateBookButton();
+  }
+})();
+</script>
+</body>
+</html>
